@@ -1,0 +1,7 @@
+// 構造体リテラルのアドレス取得方法
+s := &SomeStruct{}
+v := SomeStruct{}
+s := &v              // identical
+s := new(SomeStruct) // also identical このケースはあまり使わない
+
+// アドレス参照を取得する際に基本的にnewを使わないのが慣用的である

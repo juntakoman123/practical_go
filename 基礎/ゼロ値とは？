@@ -1,0 +1,59 @@
+
+ゼロ値を使うことでGoプログラムをよりシンプルでコンパクトにできる
+
+// 明示的な初期化なしで利用できるように設計された sync.Mutexの例
+package main
+
+import "sync"
+
+type MyInt struct {
+	mu  sync.Mutex
+	val int
+}
+
+func main() {
+	var i MyInt // コンストラクタによる初期化なし
+
+	// i.mu is usable without explicit initialisation.
+	i.mu.Lock()
+	i.val++
+	i.mu.Unlock()
+}
+
+// 明示的な初期化なしで利用できるように設計された bytes.Bufferの例
+package main
+
+import "bytes"
+import "io"
+import "os"
+
+func main() {
+        var b bytes.Buffer
+        b.Write([]byte("Hello world"))
+        io.Copy(os.Stdout, &b)
+}
+
+// nilポインタの便利な特性はnil値を持つ型のメソッドを呼び出せることです。
+// これにより、デフォルト値を簡単に提供できます。
+package main
+
+import "fmt"
+
+type Config struct {
+        path string
+}
+
+func (c *Config) Path() string {
+        if c == nil {
+                return "/usr/home"  // 値がnilの場合はデフォルト値を返せる
+        }
+        return c.path
+}
+
+func main() {
+        var c1 *Config
+        var c2 = &Config{
+                path: "/export",
+        }
+        fmt.Println(c1.Path(), c2.Path())
+}

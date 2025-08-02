@@ -1,0 +1,72 @@
+Goの配列には二つの特性がある
+1. 固定サイズである
+2. 値型である
+
+package main
+
+import "fmt"
+
+func main() {
+        var a [5]int
+        b := a // 値型なのでコピー
+        b[2] = 7 // bを更新してもaに影響はない
+        fmt.Println(a, b) // prints [0 0 0 0 0] [0 0 7 0 0]
+}
+
+Goのスライスは配列とは2つの重要な点で異なる
+1. スライスは固定サイズではない。スライスの長さはスライス自体に保持され、組み込み関数lenで取得できる
+2. あるスライス変数を別のスライス変数に代入しても、スライスの内容はコピーされない。スライスは基底配列へのポインタを保持しているため
+
+package main
+
+import "fmt"
+
+func main() {
+        var a = []int{1,2,3,4,5}
+        b := a[2:]
+        b[0] = 0
+        fmt.Println(a, b) // prints [1 2 0 4 5] [0 4 5]
+}
+
+package main
+
+
+import "fmt"
+
+func negate(s []int) {
+        for i := range s {
+                s[i] = -s[i]
+        }
+}
+
+func main() {
+        var a = []int{1, 2, 3, 4, 5}
+        negate(a)
+        fmt.Println(a) // prints [-1 -2 -3 -4 -5]
+}
+
+スライスは構造体型である
+package runtime
+
+type slice struct {
+        ptr   unsafe.Pointer // 基底配列の先頭へのポインタ
+        len   int // 長さ
+        cap   int // 容量
+}
+
+
+package main
+
+import "fmt"
+
+func double(s []int) {
+        s = append(s, s...) // sはスライスヘッダーのコピー
+}
+
+func main() {
+        s := []int{1, 2, 3}
+        double(s)
+        fmt.Println(s, len(s)) // prints [1 2 3] 3
+}
+
+スライスを代入、サブスライス、または渡す、あるいは返す際には、スライスヘッダーの3つのフィールド（基になる配列へのポインタ、現在の長さと容量）のコピーを作成していることを覚えておいてください。

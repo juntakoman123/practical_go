@@ -1,0 +1,14 @@
+// 変数を宣言する（初期化しない）ときは、この構文の使用を検討する
+var num int // 明示的な初期化はしていない
+
+// この形式の例
+var things []Thing // an empty slice of Things
+for t := range ThingCreator() {
+	things = append(things, t)
+}
+
+var thing Thing // empty Thing struct
+json.Unmarshall(reader, &thing)
+
+// 宣言と初期化を行う際には、短い宣言構文の使用を検討してください。
+num := rand.Int()

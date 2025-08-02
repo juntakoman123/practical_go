@@ -1,0 +1,22 @@
+特別な理由がない限りメソッドの宣言ではレシーバーをポインタ型にするべき
+なぜなら、sync.Mutexのような値がコピーされるのは可変の不変条件を破ってしまう可能性があるから
+安全にコピーできるケースは非常に限られている
+
+package counter
+
+type Val struct {
+        mu  sync.Mutex
+        val int
+}
+
+func (v *Val) Get() int {
+        v.mu.Lock()
+        defer v.mu.Unlock()
+        return v.val
+}
+
+func (v *Val) Add(n int) {
+        v.mu.Lock()
+        defer v.mu.Unlock()
+        v.val += n
+}
