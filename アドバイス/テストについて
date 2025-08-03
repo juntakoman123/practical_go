@@ -1,0 +1,29 @@
+修正すべきバグや実装すべき機能を与えられたときの最初の対応は、まず失敗するテストを書くことです。
+テスト容易性のあるインタフェースを強制的に考えさせられるのが良い
+
+// マップリテラル構文を使ったテーブルドリブンテスト
+マップの場合テストの実行順序がランダムなので順序に依存する場合はエラーになる可能性がある。
+つまり、マップリテラル構文を使ったテーブルドリブンテストによって変な依存関係のあるコードは書けなくなる。
+func TestSplit(t *testing.T) {
+	tests := map[string]struct {
+		input string
+		sep   string
+		want  []string
+	}{
+		"simple":       {input: "a/b/c", sep: "/", want: []string{"a", "b", "c"}},
+		"wrong sep":    {input: "a/b/c", sep: ",", want: []string{"a/b/c"}},
+		"no sep":       {input: "abc", sep: "/", want: []string{"abc"}},
+		"trailing sep": {input: "a/b/c/", sep: "/", want: []string{"a", "b", "c"}},
+	}
+
+	for name, tc := range tests {
+		got := Split(tc.input, tc.sep)
+		if !reflect.DeepEqual(tc.want, got) {
+			t.Fatalf("%s: expected: %v, got: %v", name, tc.want, got)
+		}
+	}
+}
+パッケージのユニットテストを書く際には、内部テストを使用することをお勧めします。
+いつどんな時も出荷できるように整備されてないといけない。
+つまりテストはインフラである。
+テストコードはコードの変更に対して自信を与える
